@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <TextView
+        android:id="@+id/option3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="108dp"
+        android:background="#CF9FB5"
+        android:gravity="center"
+        android:text="Barack Obama"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/option2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="169dp"
+        android:background="#CF9FB5"
+        android:gravity="center"
+        android:text="George H. W. Bush"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/flashcard_question"
@@ -13,7 +41,10 @@
         android:layout_height="200dp"
         android:text="Who is the 44th President of the United States?"
         android:gravity="center"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        android:background="@drawable/card_background"
+        android:textColor="#FFFFFF"
+        android:elevation="30dp"/>
 
     <TextView
         android:id="@+id/flashcard_answer"
@@ -22,5 +53,22 @@
         android:layout_height="200dp"
         android:text="Barack Obama"
         android:gravity="center"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        android:background="@drawable/answer_background"
+        android:textColor="#ffffff"
+        android:elevation="30dp"/>
+
+    <TextView
+        android:id="@+id/option1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="#CF9FB5"
+        android:gravity="center"
+        android:text="Bill Clinton"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="30sp" />
+
 </RelativeLayout>
