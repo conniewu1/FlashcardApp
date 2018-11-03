@@ -4,7 +4,7 @@
 ### App Description
 This updated version of the flashcard app allows users to enter in their own question and answer and save it to the flashcard
 
-### App Walk-though
+### App Walk-through
 <img src="http://g.recordit.co/gGZv6vdV8S.gif" width=200><br>
 
 ## Required
