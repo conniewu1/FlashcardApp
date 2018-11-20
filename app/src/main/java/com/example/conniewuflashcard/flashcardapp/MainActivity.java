@@ -5,13 +5,45 @@ import android.os.Bundle;
 import android.view.View;
 import android.content.Intent;
 import android.widget.TextView;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    FlashcardDatabase flashcardDatabase;
+    List<Flashcard> allFlashcards;
+    int currentCardDisplayedIndex = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        flashcardDatabase = new FlashcardDatabase(getApplicationContext());
+        allFlashcards = flashcardDatabase.getAllCards();
+
+        if (allFlashcards != null && allFlashcards.size() > 0) {
+            ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(0).getQuestion());
+            ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(0).getAnswer());
+        }
+
+        findViewById(R.id.next_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // advance our pointer index so we can show the next card
+                currentCardDisplayedIndex++;
+
+                // make sure we don't get an IndexOutOfBoundsError if we are viewing the last indexed card in our list
+                if (currentCardDisplayedIndex > allFlashcards.size() - 1) {
+                    currentCardDisplayedIndex = 0;
+                }
+
+                // set the question and answer TextViews with data from the database
+                ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+
+                findViewById(R.id.flashcard_answer).setVisibility(View.INVISIBLE);
+                findViewById(R.id.flashcard_question).setVisibility(View.VISIBLE);
+            }
+        });
 
         findViewById(R.id.flashcard_question).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivityForResult(intent, 100);
             }
         });
+
     }
 
     @Override
@@ -78,8 +111,57 @@ public class MainActivity extends AppCompatActivity {
 
             ((TextView) findViewById(R.id.flashcard_question)).setText(s1);
             ((TextView) findViewById(R.id.flashcard_answer)).setText(s2);
+            flashcardDatabase.insertCard(new Flashcard(s1, s2));
+            allFlashcards = flashcardDatabase.getAllCards();
+
+            findViewById(R.id.flashcard_answer).setVisibility(View.INVISIBLE);
+            findViewById(R.id.flashcard_question).setVisibility(View.VISIBLE);
+
         }
 
     }
 
 }
+
+/*<TextView
+        android:id="@+id/option3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="94dp"
+        android:background="#CF9FB5"
+        android:gravity="center"
+        android:text="Barack Obama"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="30sp" />
+
+        <TextView
+        android:id="@+id/option2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="142dp"
+        android:background="#CF9FB5"
+        android:gravity="center"
+        android:text="George H. W. Bush"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="30sp" />
+
+        <TextView
+        android:id="@+id/option1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="192dp"
+        android:background="#CF9FB5"
+        android:gravity="center"
+        android:text="John F. Kennedy"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="30sp" />
+        */
