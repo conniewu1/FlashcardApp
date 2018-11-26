@@ -1,9 +1,13 @@
 package com.example.conniewuflashcard.flashcardapp;
 
+import android.animation.Animator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.content.Intent;
+import android.view.ViewAnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import java.util.List;
 
@@ -28,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.next_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final Animation leftOutAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.left_out);
+                final Animation rightInAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.right_in);
+
                 // advance our pointer index so we can show the next card
                 currentCardDisplayedIndex++;
 
@@ -36,20 +43,56 @@ public class MainActivity extends AppCompatActivity {
                     currentCardDisplayedIndex = 0;
                 }
 
-                // set the question and answer TextViews with data from the database
-                ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
-                ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                leftOutAnim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        findViewById(R.id.flashcard_question).startAnimation(rightInAnim);
+
+                        // set the question and answer TextViews with data from the database
+                        ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                        ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        // we don't need to worry about this method
+                    }
+                });
+                findViewById(R.id.flashcard_question).startAnimation(leftOutAnim);
 
                 findViewById(R.id.flashcard_answer).setVisibility(View.INVISIBLE);
                 findViewById(R.id.flashcard_question).setVisibility(View.VISIBLE);
+
             }
         });
 
         findViewById(R.id.flashcard_question).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                View answerSideView = findViewById(R.id.flashcard_answer);
+
+// get the center for the clipping circle
+                int cx = answerSideView.getWidth() / 2;
+                int cy = answerSideView.getHeight() / 2;
+
+// get the final radius for the clipping circle
+                float finalRadius = (float) Math.hypot(cx, cy);
+
+// create the animator for this view (the start radius is zero)
+                Animator anim = ViewAnimationUtils.createCircularReveal(answerSideView, cx, cy, 0f, finalRadius);
+
+// hide the question and show the answer to prepare for playing the animation!
                 findViewById(R.id.flashcard_answer).setVisibility(View.VISIBLE);
                 findViewById(R.id.flashcard_question).setVisibility(View.INVISIBLE);
+
+                anim.setDuration(500);
+                anim.start();
             }
         });
 
@@ -61,43 +104,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.option1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findViewById(R.id.option1).setBackgroundColor(getResources().getColor(R.color.my_red_color, null));
-                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_green_color, null));
-            }
-        });
-
-        findViewById(R.id.option2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findViewById(R.id.option2).setBackgroundColor(getResources().getColor(R.color.my_red_color, null));
-                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_green_color, null));
-            }
-        });
-
-        findViewById(R.id.option3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_green_color, null));
-            }
-        });
-
-        findViewById(R.id.rootView).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findViewById(R.id.option1).setBackgroundColor(getResources().getColor(R.color.my_pink_color, null));
-                findViewById(R.id.option2).setBackgroundColor(getResources().getColor(R.color.my_pink_color, null));
-                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_pink_color, null));
-            }
-        });
-
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddCardActivity.class);
                 MainActivity.this.startActivityForResult(intent, 100);
+                overridePendingTransition(R.anim.right_in, R.anim.left_out);
             }
         });
 
@@ -164,4 +176,36 @@ public class MainActivity extends AppCompatActivity {
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="30sp" />
+
+        findViewById(R.id.option1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.option1).setBackgroundColor(getResources().getColor(R.color.my_red_color, null));
+                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_green_color, null));
+            }
+        });
+
+        findViewById(R.id.option2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.option2).setBackgroundColor(getResources().getColor(R.color.my_red_color, null));
+                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_green_color, null));
+            }
+        });
+
+        findViewById(R.id.option3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_green_color, null));
+            }
+        });
+
+        findViewById(R.id.rootView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.option1).setBackgroundColor(getResources().getColor(R.color.my_pink_color, null));
+                findViewById(R.id.option2).setBackgroundColor(getResources().getColor(R.color.my_pink_color, null));
+                findViewById(R.id.option3).setBackgroundColor(getResources().getColor(R.color.my_pink_color, null));
+            }
+        });
         */
